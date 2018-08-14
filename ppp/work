@@ -1,0 +1,93 @@
+https://www.swebb.net/2017/12/huawei-e3531-configuration-raspbian-jessie/
+
+#usb_modeswitch -W -I -v 12d1 -p 1f01 -M 55534243123456780000000000000011062000000101000100000000000000
+#usb_modeswitch -W -I -v 12d1 -p 1f01 -M 55534243123456780000000000000011062000000100000000000000000000
+
+#vi /etc/usb_modeswitch.d/12d1:1f01
+<!-->
+DefaultVendor=0x12d1
+DefaultProduct=0x1f01
+MessageContent="55534243123456780000000000000011062000000100000000000000000000"
+NoDriverLoading=1
+<!-->
+
+>teste
+#sb_modeswitch -c /etc/usb_modeswitch.d/12d1:1f01
+
+#mkdir /scripts/ && vi /scripts/USBDevConnect
+<!-->
+
+#!/bin/bash
+
+CONFIG=/etc/usb_modeswitch.d/$1\:$2
+
+sleep 15
+
+usb_modeswitch -D -c $CONFIG
+
+<!-->
+ 
+ #vi /lib/udev/rules.d/40-usb_modeswitch.rules
+
+ <!-->
+ATTRS{idVendor}=="12d1", ATTR{bInterfaceNumber}=="00", ATTR{bInterfaceClass}=="08", RUN+="/scripts/USBDevConnect %s{idVendor} %s{idProduct}"
+ <!-->
+ 
+ 
+ #vi /etc/wvdial.conf
+ <!-->
+[Dialer Claro]
+Modem = /dev/ttyUSB0
+Baud = 921600
+DialCommand = ATDT
+Check Def Route = on
+FlowControl = Hardware(CRTSCTS)
+Username = claro
+Password = claro
+Phone = *99#
+Stupid mode = 1
+Auto Reconnect = on
+Auto DNS = on
+Init1 = ATZ
+Init2 = ATQ0 V1 E1 S0=0 &C1 &D2
+Init3 = AT+CGDCONT=1,"IP","claro.com.br"
+ISDN = 0
+Modem Type = Analog Modem
+
+[Dialer TIM]
+Modem = /dev/ttyUSB0
+Baud = 921600
+DialCommand = ATDT
+Check Def Route = on
+FlowControl = Hardware(CRTSCTS)
+Username = tim
+Password = tim
+Phone = *99#
+Stupid mode = 1
+Auto Reconnect = on
+Auto DNS = on
+Init1 = ATZ
+Init2 = ATQ0 V1 E1 S0=0 &C1 &D2
+Init3 = AT+CGDCONT=1,"IP","tim.com.br"
+ISDN = 0
+Modem Type = Analog Modem
+
+[Dialer Vivo]
+Modem = /dev/ttyUSB0
+Baud = 921600
+DialCommand = ATDT
+Check Def Route = on
+FlowControl = Hardware(CRTSCTS)
+Username = vivo
+Password = vivo
+Phone = *99#
+Stupid mode = 1
+Auto Reconnect = on
+Auto DNS = on
+Init1 = ATZ
+Init2 = ATQ0 V1 E1 S0=0 &C1 &D2
+Init3 = AT+CGDCONT=1,"IP","zap.vivo.com.br"
+ISDN = 0
+Modem Type = Analog Modem
+
+<!-->

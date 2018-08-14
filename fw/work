@@ -1,0 +1,34 @@
+echo 1 > /proc/sys/net/ipv4/ip_forward
+vi /etc/sysctl.conf
+<!-->
+net.ipv4.ip_forward = 1
+<!-->
+
+sysctl -p /etc/sysctl.conf
+
+
+ufw --force reset
+
+ufw default deny incoming 
+ufw default deny outgoing
+ufw allow out on tun0
+ufw allow in on tun0
+ufw allow out $port/$protocol
+ufw allow out to 10.8.0.0/8
+ufw enable
+
+ip route add  10.8.0.0/16 dev tun0
+ip route add 0.0.0.0/0 via 10.8.0.1
+
+
+https://www.hardware.com.br/tutoriais/openvpn/pagina6.html
+
+
+server
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -s 10.8.0.0/16 -A POSTROUTING -o enp0s3 -j MASQUERADE
+
+cliente
+ip route add 192.168.20.0/24 via 10.8.0.1
+
+
